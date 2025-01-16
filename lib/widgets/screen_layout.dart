@@ -14,7 +14,6 @@ class ScreenLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 75, 75, 75),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
