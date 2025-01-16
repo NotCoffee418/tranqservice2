@@ -14,10 +14,23 @@ class ScreenLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 75, 75, 75),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TopNav(activeScreenTitle: title),
-          body,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: DefaultTextStyle(
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+                child: body,
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -13,8 +13,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return const ScreenLayout(
       title: SettingsScreen.title,
-      body: Center(
-        child: Text('Settings page whee'),
+      body: Column(
+        children: [
+          Text('Settings page whee'),
+        ],
       ),
     );
   }

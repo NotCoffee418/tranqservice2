@@ -12,10 +12,12 @@ class PlaylistScreen extends StatefulWidget {
 class _PlaylistScreenState extends State<PlaylistScreen> {
   @override
   Widget build(BuildContext context) {
-    return const ScreenLayout(
+    return ScreenLayout(
       title: PlaylistScreen.title,
-      body: Center(
-        child: Text('Playlist page whee'),
+      body: Column(
+        children: [
+          Text('Playlist page whee'),
+        ],
       ),
     );
   }

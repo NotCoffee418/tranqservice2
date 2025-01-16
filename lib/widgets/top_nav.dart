@@ -12,7 +12,7 @@ class TopNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.deepPurple,
+      color: Colors.red,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start, // Align items to the left
@@ -44,7 +44,7 @@ class TopNav extends StatelessWidget {
 
               },
               style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 minimumSize: const Size(0, 0),
               ),
               child: Text(
@@ -52,12 +52,12 @@ class TopNav extends StatelessWidget {
                 style: TextStyle(
                   color: isActive ? Colors.limeAccent : Colors.white,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                  fontSize: 16, // Smaller desktop-friendly text
+                  fontSize: 16,
                 ),
               ),
             ),
           );
-        }).toList(),
+        }),
         ],
       ),
     );
