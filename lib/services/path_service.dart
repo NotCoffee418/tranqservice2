@@ -3,12 +3,12 @@ import 'package:path/path.dart' as p;
 import 'package:tranqservice2/config.dart';
 
 class PathService {
-  Future<String> getWorkingFile(String fileName, [List<String> parts = const []]) async {
+  static Future<String> getWorkingFile(String fileName, [List<String> parts = const []]) async {
     final workingDir = await getWorkingDir(parts);
     return p.join(workingDir, fileName);
   }
 
-  Future<String> getWorkingDir([List<String> parts = const []]) async {
+  static Future<String> getWorkingDir([List<String> parts = const []]) async {
     final String baseDir;
 
     if (Platform.isWindows) {

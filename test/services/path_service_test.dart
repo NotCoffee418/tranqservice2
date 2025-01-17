@@ -5,11 +5,9 @@ import 'package:tranqservice2/services/path_service.dart';
 import 'package:tranqservice2/config.dart';
 
 void main() {
-  late PathService pathService;
 
   // Set up before tests
   setUp(() {
-    pathService = PathService();
     Config.workingDirName = 'test_app'; // Set a test-specific app name
   });
 
@@ -19,7 +17,7 @@ void main() {
       const testSubDir = 'test_subdir';
 
       // Act
-      final workingDir = await pathService.getWorkingDir([testSubDir]);
+      final workingDir = await PathService.getWorkingDir([testSubDir]);
 
       // Assert
       expect(
@@ -47,7 +45,7 @@ void main() {
       const testSubDir = 'other_subdir';
 
       // Act
-      final filePath = await pathService.getWorkingFile(testFileName, [testSubDir]);
+      final filePath = await PathService.getWorkingFile(testFileName, [testSubDir]);
 
       // Assert
       expect(
@@ -76,7 +74,7 @@ void main() {
 
       if (unsupportedPlatform) {
         expect(
-          () async => await pathService.getWorkingDir(),
+          () async => await PathService.getWorkingDir(),
           throwsA(isA<UnsupportedError>()),
         );
       }
