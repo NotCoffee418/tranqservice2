@@ -38,10 +38,13 @@ class TopNav extends StatelessWidget {
                 if (!isActive) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => route.screenBuilder()),
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => route.screenBuilder(),
+                      transitionDuration: Duration(seconds: 0), // No transition duration
+                      reverseTransitionDuration: Duration(seconds: 0), // No reverse transition duration
+                    ),
                   );
                 }
-
               },
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
