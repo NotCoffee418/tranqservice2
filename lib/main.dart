@@ -1,14 +1,30 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tranqservice2/screens/playlist_screen.dart';
 
+// flutter run --dart-define=MODE=service
+// flutter run --dart-define=MODE=ui
+
 void main() {
-  runApp(const TranqService2());
+  final mode = const String.fromEnvironment('MODE', defaultValue: 'ui');
+
+  if (mode == 'service') {
+    runServiceMode();
+  } else {
+    runApp(const TranqService2());
+  }
+}
+
+void runServiceMode() {
+  print('Service mode started');
+  Timer.periodic(const Duration(seconds: 5), (timer) {
+    print('alive');
+  });
 }
 
 class TranqService2 extends StatelessWidget {
   const TranqService2({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,4 +43,3 @@ class TranqService2 extends StatelessWidget {
     );
   }
 }
-
