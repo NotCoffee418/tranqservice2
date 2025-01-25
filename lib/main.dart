@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tranqservice2/screens/playlist_screen.dart';
+import 'package:tranqservice2/services/database_service.dart';
 
 // flutter run --dart-define=MODE=service
 // flutter run --dart-define=MODE=ui
@@ -8,6 +9,10 @@ import 'package:tranqservice2/screens/playlist_screen.dart';
 void main() {
   final mode = const String.fromEnvironment('MODE', defaultValue: 'ui');
 
+  // background init database
+  DatabaseService.getDb();
+
+  // Run app in defined mode
   if (mode == 'service') {
     runServiceMode();
   } else {
