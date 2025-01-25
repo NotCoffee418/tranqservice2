@@ -12,8 +12,8 @@ class PathService {
     final String baseDir;
 
     if (Platform.isWindows) {
-      baseDir = Platform.environment['APPDATA'] ??
-          (throw StateError('APPDATA environment variable is not set.'));
+      baseDir = Platform.environment['LOCALAPPDATA'] ??
+          (throw StateError('LOCALAPPDATA environment variable is not set.'));
     } else if (Platform.isLinux) {
       final home = Platform.environment['HOME'] ??
           (throw StateError('HOME environment variable is not set.'));
