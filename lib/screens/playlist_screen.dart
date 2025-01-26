@@ -21,9 +21,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
             children: [
               Text(
                 'Playlist page whee',
-                style: Theme.of(context).textTheme.headlineSmall, // Use centralized theme
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
-              // Add playlist list UI here later
             ],
           ),
           Positioned(
@@ -31,6 +30,9 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
             right: 16,
             child: ElevatedButton.icon(
               onPressed: () async {
+                // Clear any lingering SnackBars before navigation
+                ScaffoldMessenger.of(context).clearSnackBars();
+
                 final bool? playlistAdded = await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -38,10 +40,12 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                   ),
                 );
 
-                if (playlistAdded == true) {
+                // Show SnackBar if a playlist was added
+                if (playlistAdded == true && mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Playlist added successfully!'),
+                      behavior: SnackBarBehavior.floating,
                       margin: EdgeInsets.only(
                         bottom: 80,
                         left: 16,

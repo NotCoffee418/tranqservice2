@@ -5,6 +5,7 @@ class ScreenLayout extends StatelessWidget {
   final String title;
   final Widget body;
   final Widget? floatingActionButton;
+
   const ScreenLayout({
     super.key,
     required this.title,
@@ -31,9 +32,9 @@ class ScreenLayout extends StatelessWidget {
               ),
             ),
           ),
-          floatingActionButton ?? const SizedBox.shrink(),
         ],
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

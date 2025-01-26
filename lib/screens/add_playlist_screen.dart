@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tranqservice2/widgets/screen_layout.dart';
 import 'package:file_selector/file_selector.dart';
 import 'dart:io';
-
+import 'package:flutter/services.dart';
 
 class AddPlaylistScreen extends StatefulWidget {
   const AddPlaylistScreen({super.key});
@@ -64,11 +64,14 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
     }
   }
 
-  void _addPlaylist() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.pop(context, true); // Indicate success
-    }
+void _addPlaylist() {
+  if (_formKey.currentState!.validate()) {
+    // Pop latest ScaffoldMessenger defined in playlist_screen.dart
+    // since it shows there. its sketch but cant bother right now.
+    Navigator.pop(context, true);
   }
+}
+
 
   String? _validateDirectory(String? text) {
     if (text == null || text.isEmpty) {
@@ -94,18 +97,39 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
           key: _formKey,
           child: ListView(
             children: [
-
-              // Playlist URL Input
-              TextFormField(
-                controller: _urlController,
-                decoration: const InputDecoration(
-                  labelText: 'Playlist URL',
-                ),
-                validator: _validateUrl,
+              // Playlist URL Input with Paste Button
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _urlController,
+                      decoration: const InputDecoration(
+                        labelText: 'Playlist URL',
+                      ),
+                      validator: _validateUrl,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 100, // Match size with Browse button
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final clipboardData =
+                            await Clipboard.getData('text/plain');
+                        if (clipboardData != null && clipboardData.text != null) {
+                          setState(() {
+                            _urlController.text = clipboardData.text!;
+                          });
+                        }
+                      },
+                      child: const Text('Paste'),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
 
-              // Save Directory Input
+              // Save Directory Input with Browse Button
               Row(
                 children: [
                   Expanded(
@@ -118,9 +142,12 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _browseDirectory,
-                    child: const Text('Browse'),
+                  SizedBox(
+                    width: 100, // Match size with Paste button
+                    child: ElevatedButton(
+                      onPressed: _browseDirectory,
+                      child: const Text('Browse'),
+                    ),
                   ),
                 ],
               ),
@@ -134,7 +161,6 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
                   DropdownMenuItem(value: 'mp4', child: Text('MP4')),
                 ],
                 onChanged: (value) {
-                  // Update `_selectedFormat` directly without `setState`
                   _selectedFormat = value!;
                 },
                 decoration: const InputDecoration(

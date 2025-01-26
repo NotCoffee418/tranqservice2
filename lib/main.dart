@@ -41,71 +41,49 @@ class TranqService2 extends StatelessWidget {
           seedColor: Colors.red,
           brightness: Brightness.dark,
         ),
-        scaffoldBackgroundColor: const Color.fromARGB(255, 75, 75, 75),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-          headlineSmall: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        snackBarTheme: const SnackBarThemeData(
+          behavior: SnackBarBehavior.floating, // Make all SnackBars floating globally
+          backgroundColor: Colors.grey,
+          contentTextStyle: TextStyle(color: Colors.white),
+          elevation: 6,
         ),
-        
+        scaffoldBackgroundColor: const Color.fromARGB(255, 75, 75, 75),
         inputDecorationTheme: const InputDecorationTheme(
           filled: true,
-          fillColor: Color.fromARGB(255, 50, 50, 50), // Default darker gray for input fields
+          fillColor: Color.fromARGB(255, 50, 50, 50),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            borderSide: BorderSide(color: Colors.white30), // Subtle gray border for inactive fields
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-            borderSide: BorderSide(color: Colors.white30), // Same for non-focused active
+            borderSide: BorderSide(color: Colors.white30),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            borderSide: BorderSide(color: Colors.white70, width: 2), // Bright white for focus
+            borderSide: BorderSide(color: Colors.white70, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            borderSide: BorderSide(color: Colors.red, width: 2), // Red strictly for validation errors
+            borderSide: BorderSide(color: Colors.red, width: 2),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            borderSide: BorderSide(color: Colors.red, width: 2), // Red for focused errors only
+            borderSide: BorderSide(color: Colors.red, width: 2),
           ),
-          labelStyle: TextStyle(color: Colors.white70), // Subtle label when inactive
-          floatingLabelStyle: TextStyle(color: Colors.white), // White label when focused
-          hintStyle: TextStyle(color: Colors.white54), // Subtle gray for hint text
+          labelStyle: TextStyle(color: Colors.white70),
+          floatingLabelStyle: TextStyle(color: Colors.white),
+          hintStyle: TextStyle(color: Colors.white54),
         ),
-
-
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            backgroundColor: Colors.red, // Button background color
+            foregroundColor: Colors.white, // Button text color
+            minimumSize: const Size(0, 48), // Matches the height of text fields
+            padding: const EdgeInsets.symmetric(horizontal: 16), // Horizontal padding
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(8), // Consistent corner radius with text fields
             ),
-            elevation: 6,
+            elevation: 2, // Slight elevation for depth
           ),
         ),
-        snackBarTheme: const SnackBarThemeData(
-          backgroundColor: Colors.grey,
-          contentTextStyle: TextStyle(color: Colors.white),
-          behavior: SnackBarBehavior.floating,
-          elevation: 6,
-        ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-        ),
       ),
-
     );
   }
 }
