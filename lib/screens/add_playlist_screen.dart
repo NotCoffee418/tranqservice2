@@ -16,6 +16,7 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
   final TextEditingController _urlController = TextEditingController();
   final TextEditingController _directoryController = TextEditingController();
   String _selectedFormat = 'mp3';
+  bool _isAdding = false;
 
   @override
   void dispose() {
@@ -65,11 +66,14 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
   }
 
 void _addPlaylist() {
+  if (_isAdding) return;
+  _isAdding = true;
   if (_formKey.currentState!.validate()) {
     // Pop latest ScaffoldMessenger defined in playlist_screen.dart
     // since it shows there. its sketch but cant bother right now.
     Navigator.pop(context, true);
   }
+  _isAdding = false;
 }
 
 
