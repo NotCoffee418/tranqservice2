@@ -53,19 +53,36 @@ class TranqService2 extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        
         inputDecorationTheme: const InputDecorationTheme(
           filled: true,
-          fillColor: Color.fromARGB(255, 66, 66, 66),
+          fillColor: Color.fromARGB(255, 50, 50, 50), // Default darker gray for input fields
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            borderSide: BorderSide(color: Colors.white30),
+            borderSide: BorderSide(color: Colors.white30), // Subtle gray border for inactive fields
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: Colors.white30), // Same for non-focused active
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            borderSide: BorderSide(color: Colors.red),
+            borderSide: BorderSide(color: Colors.white70, width: 2), // Bright white for focus
           ),
-          labelStyle: TextStyle(color: Colors.white70),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: Colors.red, width: 2), // Red strictly for validation errors
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: Colors.red, width: 2), // Red for focused errors only
+          ),
+          labelStyle: TextStyle(color: Colors.white70), // Subtle label when inactive
+          floatingLabelStyle: TextStyle(color: Colors.white), // White label when focused
+          hintStyle: TextStyle(color: Colors.white54), // Subtle gray for hint text
         ),
+
+
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
