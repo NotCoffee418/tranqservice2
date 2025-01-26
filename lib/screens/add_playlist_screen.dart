@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tranqservice2/widgets/screen_layout.dart';
+import 'package:file_selector/file_selector.dart';
+import 'dart:io';
+
 
 class AddPlaylistScreen extends StatefulWidget {
   const AddPlaylistScreen({super.key});
@@ -21,16 +24,64 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
     super.dispose();
   }
 
-  void _browseDirectory() async {
-    // Simulate directory selection
-    // Only update the controller without using `setState`
-    _directoryController.text = "/path/to/selected/directory";
+  Future<void> _browseDirectory() async {
+    String? initialDirectory;
+
+    // Determine initial directory based on platform and format
+    if (Platform.isWindows) {
+      if (_selectedFormat == 'mp3') {
+        initialDirectory = '${Platform.environment['USERPROFILE']}\\Music';
+      } else if (_selectedFormat == 'mp4') {
+        initialDirectory = '${Platform.environment['USERPROFILE']}\\Videos';
+      }
+    } else if (Platform.isLinux || Platform.isMacOS) {
+      if (_selectedFormat == 'mp3') {
+        final musicDir = Directory('${Platform.environment['HOME']}/Music');
+        if (musicDir.existsSync()) {
+          initialDirectory = musicDir.path;
+        }
+      } else if (_selectedFormat == 'mp4') {
+        final videosDir = Directory('${Platform.environment['HOME']}/Videos');
+        if (videosDir.existsSync()) {
+          initialDirectory = videosDir.path;
+        }
+      }
+    }
+
+    // Fallback to home directory
+    initialDirectory ??= Platform.isWindows
+        ? Platform.environment['USERPROFILE']
+        : Platform.environment['HOME'];
+
+    // Use file_selector to open directory picker
+    final selectedDirectory = await getDirectoryPath(
+      initialDirectory: initialDirectory,
+      confirmButtonText: 'Select Directory',
+    );
+
+    if (selectedDirectory != null) {
+      _directoryController.text = selectedDirectory;
+    }
   }
 
   void _addPlaylist() {
     if (_formKey.currentState!.validate()) {
       Navigator.pop(context, true); // Indicate success
     }
+  }
+
+  String? _validateDirectory(String? text) {
+    if (text == null || text.isEmpty) {
+      return 'Please select a save directory';
+    }
+    return null;
+  }
+
+  String? _validateUrl(String? text) {
+    if (text == null || text.isEmpty) {
+      return 'Please enter a playlist URL';
+    }
+    return null;
   }
 
   @override
@@ -41,20 +92,16 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView( // ListView for smooth scrolling, especially with long forms
+          child: ListView(
             children: [
+
               // Playlist URL Input
               TextFormField(
                 controller: _urlController,
                 decoration: const InputDecoration(
                   labelText: 'Playlist URL',
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a playlist URL';
-                  }
-                  return null;
-                },
+                validator: _validateUrl,
               ),
               const SizedBox(height: 16),
 
@@ -64,16 +111,10 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _directoryController,
-                      readOnly: true, // Prevent manual input
                       decoration: const InputDecoration(
                         labelText: 'Save Directory',
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a save directory';
-                        }
-                        return null;
-                      },
+                      validator: _validateDirectory,
                     ),
                   ),
                   const SizedBox(width: 8),
