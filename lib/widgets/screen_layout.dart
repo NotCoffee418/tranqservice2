@@ -4,11 +4,12 @@ import 'top_nav.dart';
 class ScreenLayout extends StatelessWidget {
   final String title;
   final Widget body;
-
+  final Widget? floatingActionButton;
   const ScreenLayout({
     super.key,
     required this.title,
     required this.body,
+    this.floatingActionButton,
   });
 
   @override
@@ -30,6 +31,7 @@ class ScreenLayout extends StatelessWidget {
               ),
             ),
           ),
+          floatingActionButton ?? const SizedBox.shrink(),
         ],
       ),
     );
