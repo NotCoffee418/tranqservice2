@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:tranqservice2/services/database_access/log_access.dart';
 import 'package:tranqservice2/services/path_service.dart';
 
 class YtdlpService {
@@ -120,7 +121,27 @@ class YtdlpService {
         'video_count': jsonData['entries'].length,
       };
     } catch (_) {
+      LogAccess.addLog(LogVerbosity.debug, 'Error fetching playlist info: $_');
       return null;
     }
+  }
+
+  static Future<String> fetchAndConvertThumbnail(String url) async {
+    if (url.isEmpty) {
+      return '';
+    }
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        return base64Encode(response.bodyBytes);
+      } else {
+        LogAccess.addLog(LogVerbosity.debug, 'Failed to fetch thumbnail: ${response.statusCode}');
+      }
+    } catch (e) {
+      LogAccess.addLog(LogVerbosity.debug, 'Error fetching thumbnail: $e');
+    }
+    return '';
   }
 }

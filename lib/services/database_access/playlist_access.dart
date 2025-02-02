@@ -3,6 +3,30 @@ import 'package:tranqservice2/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PlaylistAccess {
+  static Future<void> updatePlaylistName(int id, String newName) async {
+    final db = await DatabaseService.getDb();
+    await db.update(
+      'playlists',
+      {'name': newName},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  static Future<void> deletePlaylist(int id) async {
+    final db = await DatabaseService.getDb();
+    await db.delete('playlists', where: 'id = ?', whereArgs: [id]);
+  }
+
+  static Future<void> updatePlaylistThumbnail(int id, String thumbnailBase64) async {
+    final db = await DatabaseService.getDb();
+    await db.update(
+      'playlists',
+      {'thumbnail_base64': thumbnailBase64},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
   // Fetch all playlists from the database
   static Future<List<Playlist>> getPlaylists() async {
     final db = await DatabaseService.getDb();
@@ -26,10 +50,5 @@ class PlaylistAccess {
       },
       conflictAlgorithm: ConflictAlgorithm.ignore, // Prevent duplicate URL/Dir/Format combos
     );
-  }
-
-  static Future<void> deletePlaylist(int id) async {
-    final db = await DatabaseService.getDb();
-    await db.delete('playlists', where: 'id = ?', whereArgs: [id]);
   }
 }
