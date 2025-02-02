@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tranqservice2/widgets/screen_layout.dart';
 import 'add_playlist_screen.dart';
+import 'package:tranqservice2/services/database_access/playlist_access.dart';
+import 'package:tranqservice2/widgets/playlist/playlist_entry_widget.dart';
+import 'package:tranqservice2/models/database_models/playlist_model.dart';
 
 class PlaylistScreen extends StatefulWidget {
   static const title = 'Playlists';
@@ -11,6 +14,20 @@ class PlaylistScreen extends StatefulWidget {
 }
 
 class _PlaylistScreenState extends State<PlaylistScreen> {
+  List<Playlist> _playlists = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPlaylists();
+  }
+
+  Future<void> _loadPlaylists() async {
+    final playlists = await PlaylistAccess.getPlaylists();
+    setState(() {
+      _playlists = playlists;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return ScreenLayout(
@@ -19,6 +36,14 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         children: [
           Column(
             children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _playlists.length,
+                  itemBuilder: (context, index) {
+                    return PlaylistEntryWidget(playlist: _playlists[index]);
+                  },
+                ),
+              ),
               Text(
                 'Playlist page whee',
                 style: Theme.of(context).textTheme.headlineSmall,
