@@ -9,11 +9,11 @@
         "args": []
       },
       {
-        "name": "Flutter: Run Service Mode",
+        "name": "Flutter: Run Daemon Mode",
         "request": "launch",
         "type": "dart",
         "program": "lib/main.dart",
-        "args": ["--dart-define=MODE=service"]
+        "args": ["--dart-define=MODE=daemon"]
       }
     ]
   }

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tranqservice2/screens/playlist_screen.dart';
 import 'package:tranqservice2/services/database_service.dart';
-
+import 'package:tranqservice2/daemon/daemon_main.dart';
 // flutter run --dart-define=MODE=service
 // flutter run --dart-define=MODE=ui
 
@@ -13,18 +13,11 @@ void main() {
   DatabaseService.getDb();
 
   // Run app in defined mode
-  if (mode == 'service') {
-    runServiceMode();
+  if (mode == 'daemon') {
+    DaemonMain.runDaemon();
   } else {
     runApp(const TranqService2());
   }
-}
-
-void runServiceMode() {
-  print('Service mode started');
-  Timer.periodic(const Duration(seconds: 5), (timer) {
-    print('alive');
-  });
 }
 
 
