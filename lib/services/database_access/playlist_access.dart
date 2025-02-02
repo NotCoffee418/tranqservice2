@@ -27,4 +27,9 @@ class PlaylistAccess {
       conflictAlgorithm: ConflictAlgorithm.ignore, // Prevent duplicate URL/Dir/Format combos
     );
   }
+
+  static Future<void> deletePlaylist(int id) async {
+    final db = await DatabaseService.getDb();
+    await db.delete('playlists', where: 'id = ?', whereArgs: [id]);
+  }
 }

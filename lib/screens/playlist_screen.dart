@@ -40,7 +40,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                 child: ListView.builder(
                   itemCount: _playlists.length,
                   itemBuilder: (context, index) {
-                    return PlaylistEntryWidget(playlist: _playlists[index]);
+                    return PlaylistEntryWidget(playlist: _playlists[index], onDeleted: _loadPlaylists);
                   },
                 ),
               ),

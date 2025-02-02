@@ -3,11 +3,12 @@ import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tranqservice2/models/database_models/playlist_model.dart';
-
+import 'package:tranqservice2/services/database_access/playlist_access.dart';
 class PlaylistEntryWidget extends StatelessWidget {
+  final VoidCallback onDeleted;
   final Playlist playlist;
   
-  const PlaylistEntryWidget({super.key, required this.playlist});
+  const PlaylistEntryWidget({super.key, required this.playlist, required this.onDeleted});
 
   Future<void> _showOptionsMenu(BuildContext context, TapDownDetails details) async {
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
@@ -79,7 +80,13 @@ class PlaylistEntryWidget extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 Navigator.pop(context);
-                // TODO: Implement actual deletion logic
+                await PlaylistAccess.deletePlaylist(playlist.id);
+                if (context.mounted) {
+                  onDeleted();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Playlist removed successfully')),
+                  );
+                }
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
