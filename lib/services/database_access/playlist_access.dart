@@ -4,30 +4,27 @@ import 'package:sqflite/sqflite.dart';
 
 class PlaylistAccess {
   // Fetch all playlists from the database
-  Future<List<Playlist>> getPlaylists() async {
-    // Get the database instance
+  static Future<List<Playlist>> getPlaylists() async {
     final db = await DatabaseService.getDb();
-
-    // Query all rows from the "playlists" table
     final result = await db.query('playlists');
-
-    // Map the result to a list of Playlist models
     return result.map((map) => Playlist.fromMap(map)).toList();
   }
 
-  Future<void> addPlaylist(String url, String directory, String format) async {
+  static Future<void> addPlaylist(String name, String url, String directory, String format, String thumbnail) async {
     final db = await DatabaseService.getDb();
 
     await db.insert(
       'playlists',
       {
+        'name': name,
         'url': url,
-        'directory': directory,
-        'format': format,
+        'output_format': format,
+        'save_directory': directory,
+        'thumbnail_base64': thumbnail,
+        'is_enabled': 1, // Default to enabled
         'added_at': DateTime.now().toIso8601String(),
       },
       conflictAlgorithm: ConflictAlgorithm.ignore, // Prevent duplicate URL/Dir/Format combos
     );
   }
-
 }

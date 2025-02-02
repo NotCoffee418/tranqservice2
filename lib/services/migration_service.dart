@@ -13,6 +13,7 @@ class MigrationService {
       "save_directory" VARCHAR NOT NULL,
       "thumbnail_base64" TEXT DEFAULT NULL,
       "is_enabled" BOOLEAN NOT NULL DEFAULT TRUE,
+      "added_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY("id")
     );
 

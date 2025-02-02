@@ -6,6 +6,7 @@ class Playlist {
   final String saveDirectory;
   final String? thumbnailBase64;
   final bool isEnabled;
+  final DateTime addedAt;
 
   Playlist({
     required this.id,
@@ -15,6 +16,7 @@ class Playlist {
     required this.saveDirectory,
     this.thumbnailBase64,
     this.isEnabled = true,
+    required this.addedAt,
   });
 
   // Convert from database map to Playlist model
@@ -27,6 +29,7 @@ class Playlist {
       saveDirectory: map['save_directory'] as String,
       thumbnailBase64: map['thumbnail_base64'] as String?,
       isEnabled: (map['is_enabled'] as int) == 1, // SQLite stores booleans as 0/1
+      addedAt: DateTime.parse(map['added_at'] as String),
     );
   }
 
@@ -40,6 +43,7 @@ class Playlist {
       'save_directory': saveDirectory,
       'thumbnail_base64': thumbnailBase64,
       'is_enabled': isEnabled ? 1 : 0,
+      'added_at': addedAt.toIso8601String(),
     };
   }
 }
