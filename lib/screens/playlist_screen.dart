@@ -28,6 +28,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
       _playlists = playlists;
     });
   }
+  
   @override
   Widget build(BuildContext context) {
     return ScreenLayout(
@@ -55,27 +56,21 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
             right: 16,
             child: ElevatedButton.icon(
               onPressed: () async {
-                // Clear any lingering SnackBars before navigation
-                ScaffoldMessenger.of(context).clearSnackBars();
+                final messenger = ScaffoldMessenger.of(context);
+                messenger.clearSnackBars();
 
                 final bool? playlistAdded = await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddPlaylistScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const AddPlaylistScreen()),
                 );
 
-                // Show SnackBar if a playlist was added
                 if (playlistAdded == true && mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  await _loadPlaylists();
+                  messenger.showSnackBar(
                     const SnackBar(
                       content: Text('Playlist added successfully!'),
                       behavior: SnackBarBehavior.floating,
-                      margin: EdgeInsets.only(
-                        bottom: 80,
-                        left: 16,
-                        right: 16,
-                      ),
+                      margin: EdgeInsets.only(bottom: 80, left: 16, right: 16),
                       duration: Duration(seconds: 3),
                     ),
                   );

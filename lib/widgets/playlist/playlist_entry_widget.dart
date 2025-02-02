@@ -24,13 +24,12 @@ class PlaylistEntryWidget extends StatelessWidget {
             leading: const Icon(Icons.open_in_browser),
             title: const Text('Open Playlist'),
             onTap: () async {
+              final navigatorContext = context;
+              Navigator.pop(navigatorContext);
               final Uri playlistUri = Uri.parse(playlist.url);
               if (await canLaunchUrl(playlistUri)) {
                 await launchUrl(playlistUri, mode: LaunchMode.externalApplication);
-              } else {
-                print('Could not open URL: \${playlist.url}');
               }
-              Navigator.pop(context);
             },
           ),
         ),
@@ -39,15 +38,14 @@ class PlaylistEntryWidget extends StatelessWidget {
             leading: const Icon(Icons.folder_open),
             title: const Text('Open Directory'),
             onTap: () async {
+              final navigatorContext = context;
+              Navigator.pop(navigatorContext);
               final directoryPath = playlist.saveDirectory;
               if (Platform.isWindows) {
                 await Process.run('explorer', [directoryPath]);
               } else if (Platform.isLinux || Platform.isMacOS) {
                 await Process.run('xdg-open', [directoryPath]);
-              } else {
-                print('Unsupported platform for opening directories.');
               }
-              Navigator.pop(context);
             },
           ),
         ),
@@ -79,10 +77,11 @@ class PlaylistEntryWidget extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.pop(context);
+                final navigatorContext = context;
+                Navigator.pop(navigatorContext);
                 await PlaylistAccess.deletePlaylist(playlist.id);
+                onDeleted();
                 if (context.mounted) {
-                  onDeleted();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Playlist removed successfully')),
                   );
