@@ -83,17 +83,33 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
           child: ListView(
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: _urlController,
-                      decoration: const InputDecoration(labelText: 'Playlist URL'),
-                      validator: (text) => text == null || text.isEmpty ? 'Please enter a playlist URL' : null,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          child: TextFormField(
+                            controller: _urlController,
+                            decoration: const InputDecoration(labelText: 'Playlist URL'),
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please enter a playlist URL';
+                              }
+                              if (!text.startsWith('https')) {
+                                return 'URL must start with https';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 8),
                   SizedBox(
                     width: 100,
+                    height: 48,
                     child: ElevatedButton(
                       onPressed: () async {
                         final clipboardData = await Clipboard.getData('text/plain');
@@ -110,17 +126,33 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
               ),
               const SizedBox(height: 16),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: _directoryController,
-                      decoration: const InputDecoration(labelText: 'Save Directory'),
-                      validator: (text) => text == null || text.isEmpty ? 'Please select a save directory' : null,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          child: TextFormField(
+                            controller: _directoryController,
+                            decoration: const InputDecoration(labelText: 'Save Directory'),
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please select a save directory';
+                              }
+                              if (!Directory(text).existsSync()) {
+                                return 'Directory does not exist';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 8),
                   SizedBox(
                     width: 100,
+                    height: 48,
                     child: ElevatedButton(
                       onPressed: _browseDirectory,
                       child: const Text('Browse'),
