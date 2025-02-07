@@ -20,6 +20,7 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
   final TextEditingController _directoryController = TextEditingController();
   String _selectedFormat = 'mp3';
   bool _isAdding = false;
+  bool _isValidating = false;
 
   @override
   void dispose() {
@@ -29,6 +30,7 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
   }
 
   Future<void> _browseDirectory() async {
+    if (_isValidating) return;
     String? selectedDirectory = await getDirectoryPath(confirmButtonText: 'Select Directory');
     if (selectedDirectory != null) {
       _directoryController.text = selectedDirectory;
@@ -36,8 +38,11 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
   }
 
   void _addPlaylist() async {
-    if (_isAdding) return;
-    setState(() => _isAdding = true);
+    if (_isAdding || _isValidating) return;
+    setState(() {
+      _isAdding = true;
+      _isValidating = true;
+    });
 
     if (_formKey.currentState!.validate()) {
       final url = _urlController.text.trim();
@@ -51,10 +56,14 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
         await LogAccess.addLog(LogVerbosity.error, 'Invalid playlist URL: $url');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid playlist URL')),
+            const SnackBar(content: Text('Invalid or inaccessible playlist URL. Please ensure your playlist is PUBLIC or UNLISTED and try again.')),
           );
+
         }
-        setState(() => _isAdding = false);
+        setState(() {
+          _isAdding = false;
+          _isValidating = false;
+        });
         return;
       }
 
@@ -69,7 +78,10 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
       }
     }
 
-    setState(() => _isAdding = false);
+    setState(() {
+      _isAdding = false;
+      _isValidating = false;
+    });
   }
 
   @override
@@ -82,6 +94,9 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
           key: _formKey,
           child: ListView(
             children: [
+              if (_isValidating)
+                const Center(child: CircularProgressIndicator()),
+              const SizedBox(height: 16),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -101,6 +116,7 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
                               }
                               return null;
                             },
+                            enabled: !_isValidating,
                           ),
                         ),
                       ],
@@ -111,7 +127,7 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
                     width: 100,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed: _isValidating ? null : () async {
                         final clipboardData = await Clipboard.getData('text/plain');
                         if (clipboardData?.text != null) {
                           setState(() {
@@ -144,6 +160,7 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
                               }
                               return null;
                             },
+                            enabled: !_isValidating,
                           ),
                         ),
                       ],
@@ -154,7 +171,7 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
                     width: 100,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: _browseDirectory,
+                      onPressed: _isValidating ? null : _browseDirectory,
                       child: const Text('Browse'),
                     ),
                   ),
@@ -167,13 +184,13 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
                   DropdownMenuItem(value: 'mp3', child: Text('MP3')),
                   DropdownMenuItem(value: 'mp4', child: Text('MP4')),
                 ],
-                onChanged: (value) => _selectedFormat = value!,
+                onChanged: _isValidating ? null : (value) => _selectedFormat = value!,
                 decoration: const InputDecoration(labelText: 'Save as'),
               ),
               const SizedBox(height: 32),
               Center(
                 child: ElevatedButton(
-                  onPressed: _addPlaylist,
+                  onPressed: _isValidating ? null : _addPlaylist,
                   child: const Text('Add Playlist'),
                 ),
               ),
