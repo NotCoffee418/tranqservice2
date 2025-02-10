@@ -79,7 +79,7 @@ class PlaylistEntryWidget extends StatelessWidget {
               onPressed: () async {
                 final navigatorContext = context;
                 Navigator.pop(navigatorContext);
-                await PlaylistAccess.deletePlaylist(playlist.id);
+                PlaylistAccess.deletePlaylist(playlist.id);
                 onDeleted();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

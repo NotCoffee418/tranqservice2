@@ -1,51 +1,52 @@
-import 'dart:math';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'dart:io';
+import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
+import 'package:path/path.dart';
 import 'package:tranqservice2/services/path_service.dart';
 import 'package:tranqservice2/services/migration_service.dart';
-import 'dart:async';
 
 class DatabaseService {
-  // We keep a single Future that represents our "open DB" operation
-  static Future<Database>? _dbFuture;
   static Database? _db;
+  static String? _dbPath;
 
-  static Future<Database> getDb() {
-    // If we've already got a DB instance, return it immediately
-    if (_db != null) {
-      return Future.value(_db);
+  static Future<void> init() async {
+    if (_db != null) return;
+
+    print("🟡 Fetching database path...");
+    _dbPath = await PathService.getWorkingFile('db.sqlite');
+    print("📂 Database path: $_dbPath");
+
+    final dbFile = File(_dbPath!);
+    final bool dbExists = dbFile.existsSync();
+
+    if (!dbExists) {
+      print("⚠️ Database file does NOT exist. Creating a new one.");
+      dbFile.createSync(recursive: true);
     }
 
-    // If we are in the process of opening the DB (i.e. _dbFuture != null),
-    // just return that same Future and let callers await it.
-    if (_dbFuture != null) {
-      return _dbFuture!;
-    }
+    print("🟡 Opening SQLite database...");
+    _db = sqlite3.open(_dbPath!);
+    print("✅ SQLite database opened successfully.");
 
-    // Otherwise, create the Future and store it so subsequent calls will
-    // wait on the same operation instead of trying to open the DB again
-    _dbFuture = _openDb();
-    return _dbFuture!;
+    print("🟡 Running migrations...");
+    _runMigrations(dbExists);
+    print("✅ Migrations applied.");
   }
 
-  // Actual database opening logic
-  static Future<Database> _openDb() async {
-    // Initialize FFI
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-
-    // Get the database path
-    final dbPath = await PathService.getWorkingFile('db.sqlite');
-
-    // Compute the app database version
-    final appDbVersion = MigrationService.migrations.keys.reduce(max);
-
-    _db = await openDatabase(
-      dbPath,
-      version: appDbVersion,
-      onCreate: MigrationService.onCreate,
-      onUpgrade: MigrationService.onUpgrade,
-      singleInstance: true,
-    );
+  static Database getDb() {
+    if (_db == null) {
+      throw Exception("❌ DatabaseService.init() must be called before getDb()!");
+    }
     return _db!;
+  }
+
+  static void _runMigrations(bool dbExists) {
+    if (!dbExists) {
+      print("🟡 Running initial schema...");
+      MigrationService.onCreate(_db!);
+    } else {
+      print("🟡 Running upgrade migrations...");
+      MigrationService.onUpgrade(_db!, 1, 1); // Adjust versioning as needed
+    }
   }
 }

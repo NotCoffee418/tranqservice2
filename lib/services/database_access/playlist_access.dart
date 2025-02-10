@@ -1,54 +1,44 @@
 import 'package:tranqservice2/models/database_models/playlist_model.dart';
 import 'package:tranqservice2/services/database_service.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 class PlaylistAccess {
-  static Future<void> updatePlaylistName(int id, String newName) async {
-    final db = await DatabaseService.getDb();
-    await db.update(
-      'playlists',
-      {'name': newName},
-      where: 'id = ?',
-      whereArgs: [id],
+  static void updatePlaylistName(int id, String newName) {
+    final db = DatabaseService.getDb();
+    db.execute('UPDATE playlists SET name = ? WHERE id = ?', [newName, id]);
+    print("✅ Playlist name updated (ID: $id)");
+  }
+
+  static void deletePlaylist(int id) {
+    final db = DatabaseService.getDb();
+    db.execute('DELETE FROM playlists WHERE id = ?', [id]);
+    print("✅ Playlist deleted (ID: $id)");
+  }
+
+  static void updatePlaylistThumbnail(int id, String thumbnailBase64) {
+    final db = DatabaseService.getDb();
+    db.execute('UPDATE playlists SET thumbnail_base64 = ? WHERE id = ?', [thumbnailBase64, id]);
+    print("✅ Playlist thumbnail updated (ID: $id)");
+  }
+
+  static List<Playlist> getPlaylists() {
+    final db = DatabaseService.getDb();
+    final result = db.select('SELECT * FROM playlists');
+
+    return result.map((row) => Playlist.fromMap(row)).toList();
+  }
+
+  static void addPlaylist(String name, String url, String directory, String format, String thumbnail) {
+    final db = DatabaseService.getDb();
+
+    db.execute(
+      '''
+      INSERT INTO playlists (name, url, output_format, save_directory, thumbnail_base64, is_enabled, added_at)
+      VALUES (?, ?, ?, ?, ?, 1, ?)
+      ''',
+      [name, url, format, directory, thumbnail, DateTime.now().toIso8601String()],
     );
-  }
 
-  static Future<void> deletePlaylist(int id) async {
-    final db = await DatabaseService.getDb();
-    await db.delete('playlists', where: 'id = ?', whereArgs: [id]);
-  }
-
-  static Future<void> updatePlaylistThumbnail(int id, String thumbnailBase64) async {
-    final db = await DatabaseService.getDb();
-    await db.update(
-      'playlists',
-      {'thumbnail_base64': thumbnailBase64},
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-  // Fetch all playlists from the database
-  static Future<List<Playlist>> getPlaylists() async {
-    final db = await DatabaseService.getDb();
-    final result = await db.query('playlists');
-    return result.map((map) => Playlist.fromMap(map)).toList();
-  }
-
-  static Future<void> addPlaylist(String name, String url, String directory, String format, String thumbnail) async {
-    final db = await DatabaseService.getDb();
-
-    await db.insert(
-      'playlists',
-      {
-        'name': name,
-        'url': url,
-        'output_format': format,
-        'save_directory': directory,
-        'thumbnail_base64': thumbnail,
-        'is_enabled': 1, // Default to enabled
-        'added_at': DateTime.now().toIso8601String(),
-      },
-      conflictAlgorithm: ConflictAlgorithm.ignore, // Prevent duplicate URL/Dir/Format combos
-    );
+    print("✅ Playlist added: $name");
   }
 }

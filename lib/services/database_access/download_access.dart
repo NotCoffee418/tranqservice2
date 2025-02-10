@@ -1,47 +1,40 @@
 import 'package:tranqservice2/models/database_models/download_model.dart';
 import 'package:tranqservice2/services/database_service.dart';
 
-class DownloadRepository {  
-  // Function to retrieve all downloads sorted by descending last_attempt with an optional limit
-  Future<List<Download>> getAllDownloads({int limit = 100}) async {
-    // Get the database instance
-    final db = await DatabaseService.getDb();
+class DownloadRepository {
+  // Retrieve all downloads sorted by descending last_attempt with an optional limit
+  static List<Download> getAllDownloads({int limit = 100}) {
+    final db = DatabaseService.getDb();
 
-    // Query downloads sorted by last_attempt descending
-    final result = await db.query(
-      'downloads',
-      orderBy: 'last_attempt DESC', // Sort by last_attempt in descending order
-      limit: limit, // Optional limit
+    final result = db.select(
+      'SELECT * FROM downloads ORDER BY last_attempt DESC LIMIT ?',
+      [limit],
     );
 
-    // Map the result to a list of Download models
-    return result.map((map) => Download.fromMap(map)).toList();
+    return result.map((row) => Download.fromMap(row)).toList();
   }
 
   // Fetch all downloads for a specific playlist
-  Future<List<Download>> getDownloadsForPlaylist(int playlistId) async {
-    // Get the database instance
-    final db = await DatabaseService.getDb();
+  static List<Download> getDownloadsForPlaylist(int playlistId) {
+    final db = DatabaseService.getDb();
 
-    // Query the "downloads" table for rows matching the playlistId
-    final result = await db.query(
-      'downloads',
-      where: 'playlist_id = ?',
-      whereArgs: [playlistId],
+    final result = db.select(
+      'SELECT * FROM downloads WHERE playlist_id = ?',
+      [playlistId],
     );
 
-    // Map the result to a list of Download models
-    return result.map((map) => Download.fromMap(map)).toList();
+    return result.map((row) => Download.fromMap(row)).toList();
   }
 
-  Future<int> updateDownloadStatus({
-  required int id,
-  required int newStatus,
-  String? failMessage,
-  }) async {
-    final db = await DatabaseService.getDb();
+  // Update the status of a download
+  static void updateDownloadStatus({
+    required int id,
+    required int newStatus,
+    String? failMessage,
+  }) {
+    final db = DatabaseService.getDb();
 
-    return await db.rawUpdate(
+    db.execute(
       '''
       UPDATE downloads
       SET 
@@ -53,6 +46,7 @@ class DownloadRepository {
       ''',
       [newStatus, failMessage, id],
     );
+    
+    print("✅ Download status updated (ID: $id, Status: $newStatus)");
   }
-
 }

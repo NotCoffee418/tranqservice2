@@ -1,24 +1,27 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tranqservice2/screens/playlist_screen.dart';
 import 'package:tranqservice2/services/database_service.dart';
 import 'package:tranqservice2/daemon/daemon_main.dart';
+
 // flutter run --dart-define=MODE=service
 // flutter run --dart-define=MODE=ui
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized(); // ✅ Ensures Flutter is ready
+
   final mode = const String.fromEnvironment('MODE', defaultValue: 'ui');
 
-  // background init database
-  DatabaseService.getDb();
+  print("🟡 Forcing database initialization before UI...");
+  DatabaseService.init(); // ✅ Now properly awaited
+  print("✅ Database is ready. Proceeding with app startup.");
 
-  // Run app in defined mode
   if (mode == 'daemon') {
     DaemonMain.runDaemon();
   } else {
     runApp(const TranqService2());
   }
 }
+
 
 
 class TranqService2 extends StatelessWidget {
@@ -80,3 +83,4 @@ class TranqService2 extends StatelessWidget {
     );
   }
 }
+

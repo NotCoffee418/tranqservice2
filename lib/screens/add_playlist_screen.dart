@@ -49,11 +49,11 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
       final directory = _directoryController.text.trim();
       final format = _selectedFormat;
 
-      await LogAccess.addLog(LogVerbosity.debug, 'Validating playlist URL: $url');
+      LogAccess.addLog(LogVerbosity.debug, 'Validating playlist URL: $url');
 
       final info = await YtdlpService.fetchPlaylistInfo(url);
       if (info == null) {
-        await LogAccess.addLog(LogVerbosity.error, 'Invalid playlist URL: $url');
+        LogAccess.addLog(LogVerbosity.error, 'Invalid playlist URL: $url');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Invalid or inaccessible playlist URL. Please ensure your playlist is PUBLIC or UNLISTED and try again.')),
@@ -70,8 +70,8 @@ class _AddPlaylistScreenState extends State<AddPlaylistScreen> {
       final name = info['title'] ?? 'Unknown Playlist';
       final thumbnail = info['thumbnail'] ?? '';
 
-      await LogAccess.addLog(LogVerbosity.info, 'Adding playlist: $name');
-      await PlaylistAccess.addPlaylist(name, url, directory, format, thumbnail);
+      LogAccess.addLog(LogVerbosity.info, 'Adding playlist: $name');
+      PlaylistAccess.addPlaylist(name, url, directory, format, thumbnail);
 
       if (mounted) {
         Navigator.pop(context, true);

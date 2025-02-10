@@ -1,8 +1,7 @@
-import 'package:sqflite/sqflite.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 class MigrationService {
-  // Define migrations here without transaction
-  // Upgrade to dynamic loading assets from SQL files if it becomes too spammy
+  // Define migrations here
   static const Map<int, String> migrations = {
     1: '''
     CREATE TABLE IF NOT EXISTS "playlists" (
@@ -19,9 +18,7 @@ class MigrationService {
 
     CREATE TABLE IF NOT EXISTS "downloads" (
       "id" INTEGER NOT NULL UNIQUE,
-      -- Playlist that requested the download
       "playlist_id" INTEGER NOT NULL,
-      --  Consistent `yt-dlp` video ID (e.g., YouTube video ID)
       "video_id" VARCHAR NOT NULL,
       "status" INTEGER NOT NULL,
       "format_downloaded" VARCHAR NOT NULL,
@@ -36,6 +33,7 @@ class MigrationService {
 
     CREATE INDEX IF NOT EXISTS "downloads_index_0"
     ON "downloads" ("playlist_id", "video_id", "md5");
+
     CREATE TABLE IF NOT EXISTS "logs" (
       "id" INTEGER NOT NULL UNIQUE,
       "verbosity" INTEGER NOT NULL,
@@ -46,21 +44,20 @@ class MigrationService {
     ''',
   };
 
-
-  // On create calls onUpgrade with 0 as the old version
-  static Future<void> onCreate(Database db, int version) async {
-    await onUpgrade(db, 0, version);
+  // On create runs all migrations
+  static void onCreate(Database db) {
+    onUpgrade(db, 0, migrations.length);
   }
 
-  // Apply all new migrations as a transaction
-  static Future<void> onUpgrade(Database db, int oldVersion, int newVersion) async {
-    await db.transaction((txn) async {
-      for (var i = oldVersion + 1; i <= newVersion; i++) {
-        if (!migrations.containsKey(i)) {
-          throw Exception('Migration $i not found. Migrations should not skip numbers.');
-        }
-        await txn.execute(migrations[i]!);
+  // Apply all new migrations
+  static void onUpgrade(Database db, int oldVersion, int newVersion) {
+    for (var i = oldVersion + 1; i <= newVersion; i++) {
+      if (!migrations.containsKey(i)) {
+        throw Exception('Migration $i not found. Migrations should not skip numbers.');
       }
-    });
+      print("🟡 Running Migration $i...");
+      db.execute(migrations[i]!);
+    }
+    print("✅ All migrations applied.");
   }
 }
